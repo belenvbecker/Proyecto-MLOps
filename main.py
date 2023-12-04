@@ -8,7 +8,8 @@ app = FastAPI()
 
 @app.get('/userforgenres/{genero}')
 def UserForGenre(genero):
-    df = pd.read_parquet('./Data/Data-Funciones/df-userforgenre.parquet')
+    #df = pd.read_parquet('./Data/Data-Funciones/df-userforgenre.parquet')
+    df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
 
     df_genero= df.groupby(['user_id', 'año']).sum().reset_index()
 
