@@ -42,8 +42,8 @@ def UsersRecommend(año):
     top3_juegos = juegos_frecuencia.head(3)
 
     # Crear la lista de diccionarios para el resultado
-    resultado = [{"Puesto {}: {}".format(i + 1, juego): count} for i, (juego, count) in enumerate(top3_juegos.values)]
-
+    #resultado = [{"Puesto {}: {}".format(i + 1, juego): count} for i, (juego, count) in enumerate(top3_juegos.values)]
+    resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, _) in enumerate(top3_juegos.values)]
     return resultado
 
 
