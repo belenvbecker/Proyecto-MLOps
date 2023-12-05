@@ -8,7 +8,7 @@ app = FastAPI()
 
 #@app.get('/playtimegenre/{genero}')
 #def PlayTimeGenre(genero):
-    # Acceder al DataFrame global
+    # Acceder al DataFrame 
     #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
     
     
@@ -47,22 +47,23 @@ def UsersRecommend(año):
     return resultado
 
 @app.get('/sentiment_analysis/{año}')
-def sentiment_analysis(año:int):
+def sentiment_analysis1(año: int):
     df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
     # Filtrar el DataFrame para el año dado
     df_filtrado = df[df['año'] == año]
+    #Cuenta los comentarios positivos
+    true_value = df_filtrado[df_filtrado['sentiment_analysis']==2]['sentiment_analysis'].count()
+    # Cuenta los comentarios negativos
+    false_value = df_filtrado[df_filtrado['sentiment_analysis']==0]['sentiment_analysis'].count()
+    # Cuenta los comentarios neutrales
+    neutral_value = df_filtrado[df_filtrado['sentiment_analysis']==1]['sentiment_analysis'].count()
+    # Devolver conteos en un diccionario
 
-    # Contar la cantidad de registros para cada análisis de sentimiento
-    conteo_sentimientos = df_filtrado['sentiment_analysis'].value_counts().to_dict()
-
-    # Crear la lista de diccionarios para el resultado
-    resultado = {
-        'Negative': conteo_sentimientos.get(0, 0),
-        'Neutral': conteo_sentimientos.get(1, 0),
-        'Positive': conteo_sentimientos.get(2, 0)
-        }
-
-    return resultado
+    return {
+        'Negative': int(false_value),
+        'Positive': int(true_value),
+        'Neutral': int(neutral_value)
+    }
 
 
 
