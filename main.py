@@ -6,25 +6,25 @@ import pyarrow.parquet as pq
 
 app = FastAPI()
 
-@app.get('/playtimegenre/{genero}')
-def PlayTimeGenre(genero):
+#@app.get('/playtimegenre/{genero}')
+#def PlayTimeGenre(genero):
     # Acceder al DataFrame global
-    df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+    #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
     
     
     # Se filtra el DataFrame para el género específico
-    df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
+    #df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
 
     # Se agrupa por año y calcula las horas jugadas
-    horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
+    #horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
 
     # Se encuentra el año con más horas jugadas
-    año_max_horas = horas_por_año.idxmax()
+    #año_max_horas = horas_por_año.idxmax()
 
     # Se crea el diccionario de retorno
-    resultado = {"Año de lanzamiento con más horas jugadas para {}: {}".format(genero, año_max_horas)}
+    #resultado = {"Año de lanzamiento con más horas jugadas para {}: {}".format(genero, año_max_horas)}
 
-    return resultado
+    #return resultado
 
 @app.get('/userrecommend/{año}')
 def UsersRecommend(año):
