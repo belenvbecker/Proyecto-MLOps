@@ -46,6 +46,24 @@ def UsersRecommend(año):
     resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, _) in enumerate(top3_juegos.values)]
     return resultado
 
+@app.get('/sentiment_analysis/{año}')
+def sentiment_analysis(año):
+    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
+    # Filtrar el DataFrame para el año dado
+    df_filtrado = df[df['año'] == año]
+
+    # Contar la cantidad de registros para cada análisis de sentimiento
+    conteo_sentimientos = df_filtrado['sentiment_analysis'].value_counts().to_dict()
+
+    # Crear la lista de diccionarios para el resultado
+    resultado = {
+        'Negative': conteo_sentimientos.get(0, 0),
+        'Neutral': conteo_sentimientos.get(1, 0),
+        'Positive': conteo_sentimientos.get(2, 0)
+        }
+
+    return resultado
+
 
 
 #@app.get('/userforgenres/{genero}')
