@@ -26,6 +26,25 @@ def PlayTimeGenre(genero):
 
     return resultado
 
+@app.get('/userrecommend/{año}')
+def UsersRecommend(año):
+    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
+    # Filtrar el DataFrame para el año y las recomendaciones positivas (True) y los sentimientos 1 y 2
+    df_filtrado = df[(df['año'] == año) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))]
+
+    # Contar la frecuencia de cada juego
+    juegos_frecuencia = df_filtrado['app_name'].value_counts().reset_index() #Ver user id (carga diferente)
+
+    # Renombrar las columnas
+    juegos_frecuencia.columns = ['app_name', 'count']
+
+    # Seleccionar los tres juegos más recomendados
+    top3_juegos = juegos_frecuencia.head(3)
+
+    # Crear la lista de diccionarios para el resultado
+    resultado = [{"Puesto {}: {}".format(i + 1, juego): count} for i, (juego, count) in enumerate(top3_juegos.values)]
+
+    return resultado
 
 
 
