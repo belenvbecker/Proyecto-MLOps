@@ -47,7 +47,7 @@ def UsersRecommend(año):
     return resultado
 
 @app.get('/sentiment_analysis/{año}')
-def sentiment_analysis(año):
+def sentiment_analysis(año:int):
     df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
     # Filtrar el DataFrame para el año dado
     df_filtrado = df[df['año'] == año]
