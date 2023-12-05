@@ -47,23 +47,15 @@ def UsersRecommend(año):
     return resultado
 
 @app.get('/sentiment_analysis/{año}')
-def sentiment_analysis1(año: int):
-    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
-    # Filtrar el DataFrame para el año dado
-    df_filtrado = df[df['año'] == año]
-    #Cuenta los comentarios positivos
-    true_value = df_filtrado[df_filtrado['sentiment_analysis']==2]['sentiment_analysis'].count()
-    # Cuenta los comentarios negativos
-    false_value = df_filtrado[df_filtrado['sentiment_analysis']==0]['sentiment_analysis'].count()
-    # Cuenta los comentarios neutrales
-    neutral_value = df_filtrado[df_filtrado['sentiment_analysis']==1]['sentiment_analysis'].count()
-    # Devolver conteos en un diccionario
+def UsersRecommend(year):
+    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')    
 
-    return {
-        'Negative': int(false_value),
-        'Positive': int(true_value),
-        'Neutral': int(neutral_value)
-    }
+    df_filtrado = df[(df['año'] == year) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))]
+    df_grouped = df_filtrado.groupby(['user_id', 'app_name']).size().reset_index(name='counts')
+    juegos_frecuencia = df_grouped['app_name'].value_counts().reset_index() 
+    df_top3 = juegos_frecuencia.head(3)
+    resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, count) in enumerate(df_top3.values)]
+    return resultado
 
 
 
