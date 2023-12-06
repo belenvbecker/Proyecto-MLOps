@@ -35,9 +35,10 @@ def UsersRecommend(año):
     df_grouped = df_filtrado.groupby(['user_id', 'app_name']).size().reset_index(name='counts')
     juegos_frecuencia = df_grouped['app_name'].value_counts().reset_index() 
     df_top3 = juegos_frecuencia.head(3)
-    resultado = [{"Puesto {}".format(str(i + 1)): str(juego)} for i, (juego, count) in str(enumerate(df_top3.values))]
-    #resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, count) in enumerate(df_top3.values)]
-    return resultado
+    #resultado = [{"Puesto {}".format(str(i + 1)): str(juego)} for i, (juego, count) in (enumerate(df_top3.values))]
+    resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, count) in enumerate(df_top3.values)]
+    result_dict = {str(k): v for dic in resultado for k, v in dic.items()}
+    return result_dict
 
 
 @app.get('/sentiment_analysis/{year}')
