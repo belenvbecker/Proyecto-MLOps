@@ -38,7 +38,7 @@ def UsersRecommend(año):
     #resultado = [{"Puesto {}".format(str(i + 1)): str(juego)} for i, (juego, count) in (enumerate(df_top3.values))]
     resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, count) in enumerate(df_top3.values)]
     result_dict = {str(k): v for dic in resultado for k, v in dic.items()}
-    return result_dict
+    return str(result_dict)
 
 
 @app.get('/sentiment_analysis/{year}')
