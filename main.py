@@ -6,51 +6,44 @@ import pyarrow.parquet as pq
 
 app = FastAPI()
 
-#@app.get('/playtimegenre/{genero}')
-#def PlayTimeGenre(genero):
-    # Acceder al DataFrame 
-    #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+@app.get('/playtimegenre/{genero}')
+def PlayTimeGenre(genero):
+    #Acceder al DataFrame 
+    df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
     
     
     # Se filtra el DataFrame para el género específico
-    #df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
+    df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
 
     # Se agrupa por año y calcula las horas jugadas
-    #horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
+    horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
 
     # Se encuentra el año con más horas jugadas
-    #año_max_horas = horas_por_año.idxmax()
+    año_max_horas = horas_por_año.idxmax()
 
     # Se crea el diccionario de retorno
-    #resultado = {"Año de lanzamiento con más horas jugadas para {}: {}".format(genero, año_max_horas)}
+    resultado = {"Año de lanzamiento con más horas jugadas para {}: {}".format(genero, año_max_horas)}
 
-    #return resultado
+    return resultado
+
 
 @app.get('/userrecommend/{año}')
 def UsersRecommend(año):
-    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
-    # Filtrar el DataFrame para el año y las recomendaciones positivas (True) y los sentimientos 1 y 2
+    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')    
+
     df_filtrado = df[(df['año'] == año) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))]
-
-    # Contar la frecuencia de cada juego
-    juegos_frecuencia = df_filtrado['app_name'].value_counts().reset_index() #Ver user id (carga diferente)
-
-    # Renombrar las columnas
-    juegos_frecuencia.columns = ['app_name', 'count']
-
-    # Seleccionar los tres juegos más recomendados
-    top3_juegos = juegos_frecuencia.head(3)
-
-    # Crear la lista de diccionarios para el resultado
-    #resultado = [{"Puesto {}: {}".format(i + 1, juego): count} for i, (juego, count) in enumerate(top3_juegos.values)]
-    resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, _) in enumerate(top3_juegos.values)]
+    df_grouped = df_filtrado.groupby(['user_id', 'app_name']).size().reset_index(name='counts')
+    juegos_frecuencia = df_grouped['app_name'].value_counts().reset_index() 
+    df_top3 = juegos_frecuencia.head(3)
+    resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, count) in enumerate(df_top3.values)]
     return resultado
 
+
 @app.get('/sentiment_analysis/{year}')
-def sentiment_analysis1(year):
+def sentiment_analysis1(año: int):
     df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
     # Filtrar el DataFrame para el año dado
-    df_filtrado = df[df['año'] == year]
+    df_filtrado = df[df['año'] == año]
     #Cuenta los comentarios positivos
     Positivos = df_filtrado[df_filtrado['sentiment_analysis']==2]['sentiment_analysis'].count()
     # Cuenta los comentarios negativos
@@ -60,10 +53,10 @@ def sentiment_analysis1(year):
     # Devolver conteos en un diccionario
 
     return {
-        'Negative': str(Negativos),
-        'Positive': str(Positivos),
-        'Neutral': str(Neutrales)
-    }
+        'Negative': str(int(Negativos)),
+        'Positive': str(int(Positivos)),
+        'Neutral':str(int(Neutrales))
+        }
 
 
 
