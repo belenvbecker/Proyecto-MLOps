@@ -28,15 +28,11 @@ def PlayTimeGenre(genero):
 
 
 @app.get('/userrecommend/{año}')
-def UsersRecommend(año):
+def UsersRecommend1(año):
     df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')    
 
-    df_filtrado = df[(df['año'] == año) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))]
-    df_grouped = df_filtrado.groupby(['user_id', 'app_name']).size().reset_index(name='counts')
-    juegos_frecuencia = df_grouped['app_name'].value_counts().reset_index() 
-    df_top3 = juegos_frecuencia.head(3)
-    resultado = {f"Puesto {i + 1}": str(juego) for i, (juego, count) in enumerate(df_top3.values)}
-    #resultado = [{"Puesto {}".format(i + 1): juego} for i, (juego, count) in enumerate(df_top3.values)]
+    df_filtrado = df['app_name'][(df['año'] == año) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))].value_counts().reset_index().head(3)
+    resultado = [{"Puesto {}".format(i + 1): row['app_name']} for i, row in df_filtrado.iterrows()]
     return resultado
 
 
