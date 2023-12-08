@@ -8,9 +8,7 @@ app = FastAPI()
 
 @app.get('/playtimegenre/{genero}')
 def PlayTimeGenre(genero):
-    #Acceder al DataFrame 
     df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
-    
     
     # Se filtra el DataFrame para el género específico
     df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
@@ -28,11 +26,11 @@ def PlayTimeGenre(genero):
 
 
 @app.get('/userrecommend/{año}')
-def UsersRecommend1(year):
+def UsersRecommend(year: int):
     df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')    
 
     df_filtrado = df['app_name'][(df['año'] == year) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))].value_counts().reset_index().head(3)
-    resultado = [{"Puesto {}".format(i + 1): row['app_name']} for i, row in df_filtrado.iterrows()]
+    resultado = [{"Puesto {}:{}".format(i + 1, row['app_name'])} for i, row in df_filtrado.iterrows()]
     return resultado
 
 
@@ -57,27 +55,26 @@ def sentiment_analysis1(año: int):
 
 
 
-#@app.get('/userforgenres/{genero}')
-#def UserForGenre(genero):
-    #df = pd.read_parquet('./Data/Data-Funciones/df-userforgenre.parquet')
-    #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+@app.get('/userforgenres/{genero}')
+def UserForGenre2(genero):
+    # Filtrar el DataFrame por el género dado
+    
+    df = pd.read_csv('./Data/Data-Funciones/F_user_genre.csv.gz', compression='gzip')
 
-    #df_genero= df.groupby(['user_id', 'año']).sum().reset_index()
+    df_genero = df[df['genres'].str.contains(genero)] 
+    df_horas = df_genero.groupby('user_id')['playtime_forever'].sum().reset_index()
 
-    #df_genero = df_genero[df_genero['genres'].str.contains(genero)]
 
-    # Encontrar al usuario con la máxima cantidad de playtime
-    #usuario_max_playtime = df_genero.loc[df_genero['playtime_forever'].idxmax()]['user_id']
+    # Encontrar el usuario con más horas jugadas para ese género
+    usuario_max_playtime = df_horas.loc[df_horas['playtime_forever'].idxmax()]['user_id']
 
-    # Filtrar el DataFrame original por usuario y género
-    #df_usuario_genero = df[(df['user_id'] == usuario_max_playtime)]
-    # Agrupar por año y sumar el tiempo de juego
-    #poranio = df_usuario_genero.groupby('año')['playtime_forever'].sum().to_dict()
 
-    # Crear un diccionario con la información
-    #dicc = {
-        #'usuario': usuario_max_playtime,
-        #'años': poranio
-    #}
+    # Filtrar el DataFrame por el usuario con más horas jugadas en ese género
+    df_usuario_max = df_genero[df_genero['user_id'] == usuario_max_playtime]
+    df_horas_anio = df_usuario_max.groupby('año')['playtime_forever'].sum().reset_index()
 
-    #return dicc
+    #horas_anio = [{'Año': row['año'], 'Horas': row['playtime_forever']} for _, row in df_horas_anio.iterrows()]
+    horas_anio = [{'Año': str(row['año']), 'Horas': str(row['playtime_forever'])} for _, row in df_horas_anio.iterrows()]
+
+    salida = {'Usuario con más horas jugadas para ' + 'Action': usuario_max_playtime, 'Horas jugadas': horas_anio}
+    return salida
