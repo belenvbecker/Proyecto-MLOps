@@ -6,6 +6,8 @@ import pyarrow.parquet as pq
 
 app = FastAPI()
 
+df1 = pd.read_csv('./Data/Data-Funciones/F_user_genre.csv.gz', compression='gzip')
+
 @app.get('/playtimegenre/{genero}')
 def PlayTimeGenre(genero):
     df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
@@ -58,10 +60,10 @@ def sentiment_analysis1(año: int):
 @app.get('/userforgenres/{genero}')
 def UserForGenre2(genero):
     # Filtrar el DataFrame por el género dado
-    
-    df = pd.read_csv('./Data/Data-Funciones/F_user_genre.csv.gz', compression='gzip')
+    global df1
+    #df = pd.read_csv('./Data/Data-Funciones/F_user_genre.csv.gz', compression='gzip')
 
-    df_genero = df[df['genres'].str.contains(genero)] 
+    df_genero = df1[df1['genres'].str.contains(genero)] 
     df_horas = df_genero.groupby('user_id')['playtime_forever'].sum().reset_index()
 
 
