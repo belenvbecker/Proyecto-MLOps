@@ -8,13 +8,15 @@ import joblib
 app = FastAPI()
 
 df1 = pd.read_csv('./Data/Data-Funciones/F_user_genre.csv.gz', compression='gzip')
+df2 = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
 
 @app.get('/playtimegenre/{genero}')
 def PlayTimeGenre(genero):
-    df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+    #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+    global df2
     
     # Se filtra el DataFrame para el género específico
-    df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
+    df_genero = df2[df2['genres'].str.contains(genero, case=False, na=False)]
 
     # Se agrupa por año y calcula las horas jugadas
     horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
