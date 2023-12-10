@@ -80,3 +80,27 @@ def UserForGenre2(genero):
 
     salida = {'Usuario con más horas jugadas para ' + 'Action': usuario_max_playtime, 'Horas jugadas': horas_anio}
     return salida
+
+@app.get("/recomendacion1")
+def recomendacion3(item_id):
+    # Cargar el modelo entrenado desde el archivo pickle
+    with open('Modelo1.pkl', 'rb') as file:
+        modelo = joblib.load(file)
+
+    Modelo1 = pd.read_csv('./Modelo1.csv.gz', compression='gzip')
+
+    if item_id not in Modelo1['id'].tolist():
+        return {"Respuesta": "No se encontraron resultados para la búsqueda realizada"}
+
+    def get_recommendations(idx, cosine_sim=modelo):
+        sim_scores = list(enumerate(cosine_sim[idx]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:6]  # Top 5 juegos similares
+        game_indices = [i[0] for i in sim_scores]
+        return Modelo1['app_name'].iloc[game_indices].tolist()
+
+    # Obtener el índice del item_id
+    idx = Modelo1[Modelo1['id'] == item_id].index[0]
+
+    recommendations = get_recommendations(idx)
+    return {"Recomendaciones": recommendations}
