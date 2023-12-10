@@ -103,4 +103,4 @@ def recomendacion3(item_id):
     idx = Modelo1[Modelo1['id'] == item_id].index[0]
 
     recommendations = get_recommendations(idx)
-    return {"Recomendaciones": recommendations}
+    return {"Recomendaciones": str(recommendations)}
