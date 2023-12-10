@@ -109,4 +109,48 @@ def recomendacion3(item_id:int):
     recommendations = get_recommendations(item_id)
     return {"Recomendaciones": recommendations}
 
+
+@app.get("/recomendacion2")
+def recomendacion4(user_id):
+    #Cargar el modelo entrenado desde el archivo pickle
+    with open('Modelo1.pkl', 'rb') as file:
+       modelo2 = joblib.load(file)
+
+    Modelo2 = pd.read_csv('./Modelo2.csv.gz', compression='gzip')
+    
+    if user_id not in Modelo2['user_id'].tolist():
+       return {"Respuesta": "No se encontraron resultados para la búsqueda realizada"}
+
+    def get_recommendations_by_user(user_id, cosine_sim=modelo2):
+    # Obtener los juegos jugados por el usuario
+        games_played = Modelo2[Modelo2['user_id'] == user_id]['app_name'].tolist()
+
+        # Inicializar la lista de juegos recomendados
+        recommended_games = []
+
+        # Iterar sobre los juegos jugados por el usuario
+        for app_name in games_played:
+            # Obtener el índice del juego actual
+            idx = Modelo2[Modelo2['app_name'] == app_name].index[0]
+
+            # Obtener los puntajes de similitud para el juego actual
+            sim_scores = list(enumerate(cosine_sim[idx]))
+
+            # Ordenar los juegos por similitud
+            sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+            # Seleccionar los juegos más similares (excluyendo el juego actual)
+            sim_scores = sim_scores[1:6]
+            # Obtener los índices de los juegos recomendados
+            game_indices = [i[0] for i in sim_scores]
+
+            # Agregar los juegos recomendados a la lista
+            recommended_games.extend(Modelo2['app_name'].iloc[game_indices])
+
+         # Eliminar duplicados y devolver los primeros 5 juegos únicos recomendados
+        return list(set(recommended_games))[:5]
+  
+    recommendations2 = get_recommendations_by_user(user_id)
+    return {"Recomendaciones": recommendations2}
+
    
