@@ -8,19 +8,36 @@ import joblib
 app = FastAPI()
 
 df1 = pd.read_csv('./Data/Data-Funciones/F_user_genre.csv.gz', compression='gzip')
-df2 = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+#df2 = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+
+#@app.get('/playtimegenre/{genero}')
+#def PlayTimeGenre(genero):
+    #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
+    #global df2
+    
+    # Se filtra el DataFrame para el género específico
+    #df_genero = df2[df2['genres'].str.contains(genero, case=False, na=False)]
+
+    # Se agrupa por año y calcula las horas jugadas
+    #horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
+
+    # Se encuentra el año con más horas jugadas
+    #año_max_horas = horas_por_año.idxmax()
+
+    # Se crea el diccionario de retorno
+    #resultado = {"Año de lanzamiento con más horas jugadas para {}: {}".format(genero, año_max_horas)}
+
+    #return resultado
 
 @app.get('/playtimegenre/{genero}')
 def PlayTimeGenre(genero):
-    #df = pd.read_csv('./Data/Data-Funciones/Funciones1.csv.gz', compression='gzip')
-    global df2
+    df = pd.read_csv('./Data/Data-Funciones/agrupado.csv.gz', compression='gzip')
     
     # Se filtra el DataFrame para el género específico
-    df_genero = df2[df2['genres'].str.contains(genero, case=False, na=False)]
+    df_genero = df[df['genres'].str.contains(genero, case=False, na=False)]
 
     # Se agrupa por año y calcula las horas jugadas
     horas_por_año = df_genero.groupby('año')['playtime_forever'].sum()
-
     # Se encuentra el año con más horas jugadas
     año_max_horas = horas_por_año.idxmax()
 
@@ -37,6 +54,18 @@ def UsersRecommend(year: int):
     df_filtrado = df['app_name'][(df['año'] == year) & (df['recommend'] == True) & (df['sentiment_analysis'].isin([1, 2]))].value_counts().reset_index().head(3)
     resultado = [{"Puesto {}:{}".format(i + 1, row['app_name'])} for i, row in df_filtrado.iterrows()]
     return resultado
+
+
+@app.get('/userrnotecommend/{año}')
+def UsersNotRecommend(year: int):
+    df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')    
+
+    df_filtrado = df['app_name'][(df['año'] == year) & (df['recommend'] == False) & (df['sentiment_analysis']==0)].value_counts().reset_index().head(3)
+    resultado = [{"Puesto {}:{}".format(i + 1, row['app_name'])} for i, row in df_filtrado.iterrows()]
+    return resultado
+
+
+
 
 
 @app.get('/sentiment_analysis/{year}')
