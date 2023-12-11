@@ -66,8 +66,6 @@ def UsersNotRecommend(year: int):
 
 
 
-
-
 @app.get('/sentiment_analysis/{year}')
 def sentiment_analysis1(año: int):
     df = pd.read_csv('./Data/Data-Funciones/Funciones2.csv.gz', compression='gzip')
