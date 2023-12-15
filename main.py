@@ -119,7 +119,8 @@ def recomendacion3(item_id:int):
     with open('Modelo1.pkl', 'rb') as file:
        modelo = joblib.load(file)
 
-    Modelo1 = pd.read_csv('./Modelo1.csv.gz', compression='gzip')
+    #Modelo1 = pd.read_csv('./Modelo1.csv.gz', compression='gzip')
+    Modelo1 = pd.read_csv('./ModeloML/Modelo1.csv.gz', compression='gzip')
     
     if item_id not in Modelo1['id'].tolist():
        return {"Respuesta": "No se encontraron resultados para la búsqueda realizada"}
@@ -142,10 +143,12 @@ def recomendacion3(item_id:int):
 @app.get("/recomendacion2")
 def recomendacion4(user_id):
     #Cargar el modelo entrenado desde el archivo pickle
-    with open('Modelo1.pkl', 'rb') as file:
+    #with open('Modelo1.pkl', 'rb') as file:
+    with open('Modelo2.pkl', 'rb') as file:
        modelo2 = joblib.load(file)
 
-    Modelo2 = pd.read_csv('./Modelo2.csv.gz', compression='gzip')
+    #Modelo2 = pd.read_csv('./Modelo2.csv.gz', compression='gzip')
+    Modelo2 = pd.read_csv('./ModeloML/Modelo2.csv.gz', compression='gzip')
     
     if user_id not in Modelo2['user_id'].tolist():
        return {"Respuesta": "No se encontraron resultados para la búsqueda realizada"}
