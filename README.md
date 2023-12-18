@@ -1,4 +1,5 @@
-![](Images\machine-learning.jpg)
+<p align="center"><img src="https://i.postimg.cc/PfmCYHBZ/machine-learning.jpg"></p>
+
 
 <h1 align='center'> Proyecto Individual N°1</h1>
 
