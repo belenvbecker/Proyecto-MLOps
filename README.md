@@ -24,7 +24,7 @@
     - [Proceso de EDA](./EDA/)
     - [Modelo de Recomendación](./ModeloML/)
     - [API desplegada en Render](https://belentest.onrender.com/docs)
-    - [Link al video] 
+    - [Link al video](https://youtu.be/V2UOjIHjZ_Y)
 
 
 
